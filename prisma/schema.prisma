@@ -1,0 +1,98 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // .env 파일에서 정의하세요
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  nickname   String
+  password   String?
+  loginType  String    @default("default")
+  createdAt  DateTime  @default(now())
+
+  characters        Character[]
+  raidMemberships   RaidMembership[]
+  ledRaidGroups     RaidGroup[] @relation("LeaderOfRaidGroup")
+  aiChatLogs        AIChatLog[]
+  schedules         Schedule[]
+}
+
+model Character {
+  id              Int     @id @default(autoincrement())
+  name            String
+  job             String?
+  itemLevel       Float?
+  isRepresentative Boolean @default(false)
+
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+}
+
+model RaidGroup {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  isPublic    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  leader    User?    @relation("LeaderOfRaidGroup", fields: [leaderId], references: [id], onDelete: SetNull)
+  leaderId  Int?
+
+  memberships   RaidMembership[]
+  raidSchedules RaidSchedule[]
+}
+
+model RaidMembership {
+  id           Int       @id @default(autoincrement())
+  role         String    @default("member") // member, manager, leader 등
+  joinedAt     DateTime  @default(now())
+
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int
+
+  raidGroup    RaidGroup @relation(fields: [raidGroupId], references: [id], onDelete: Cascade)
+  raidGroupId  Int
+
+  @@unique([userId, raidGroupId])
+}
+
+model Schedule {
+  id         Int       @id @default(autoincrement())
+  title      String?
+  memo       String?
+  startTime  DateTime
+  endTime    DateTime
+  createdAt  DateTime  @default(now())
+
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+}
+
+model RaidSchedule {
+  id           Int       @id @default(autoincrement())
+  title        String?
+  memo         String?
+  startTime    DateTime
+  endTime      DateTime
+  createdAt    DateTime  @default(now())
+
+  raidGroup    RaidGroup @relation(fields: [raidGroupId], references: [id], onDelete: Cascade)
+  raidGroupId  Int
+}
+
+model AIChatLog {
+  id         Int      @id @default(autoincrement())
+  message    String
+  response   String?
+  createdAt  DateTime @default(now())
+
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+}

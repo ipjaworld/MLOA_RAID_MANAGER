@@ -1,0 +1,75 @@
+# [User]
+- id (PK)
+- email
+- password
+- nickname
+- created_at
+- updated_at
+- login_type (ex. 간편가입, kakao 등)
+
+# [Character]
+- id (PK)
+- user_id (FK -> User)
+- name
+- job
+- level
+- server
+- is_main (대표 캐릭터 여부)
+
+# [Schedule]
+- id (PK)
+- user_id (FK -> User)
+- title
+- start_time
+- end_time
+- memo
+- visibility (public/private)
+- created_at
+- updated_at
+
+# [Chat]
+- id (PK)
+- user_id (FK -> User)
+- role (user/ai)
+- message
+- created_at
+
+# [RaidGroup]
+- id (PK)
+- name
+- description
+- visibility (public/private)
+- created_at
+- updated_at
+- leader_id (FK -> User)
+
+# [RaidMember]
+- id (PK)
+- raid_group_id (FK -> RaidGroup)
+- user_id (FK -> User)
+- role (leader, sub, member)
+- joined_at
+- status (approved/pending/rejected)
+
+# [RaidSchedule]
+- id (PK)
+- raid_group_id (FK -> RaidGroup)
+- title
+- start_time
+- end_time
+- created_at
+- updated_at
+
+# [RaidTimeRecommendation]
+- id (PK)
+- raid_group_id (FK -> RaidGroup)
+- recommended_times (JSON or text)
+- created_at
+
+# [Item]
+- id (PK)
+- character_id (FK -> Character)
+- name
+- tier
+- quality
+- type
