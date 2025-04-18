@@ -44,7 +44,6 @@ MMORPG에서 여러 명이 함께하는 레이드의 경우, 공대원들의 일
 ```
 MLOA_Raid_Manager/
 ├── docs/                      # 문서 (API 명세서, ERD 등)
-├── prisma/                    # Prisma 스키마 및 마이그레이션
 ├── frontend/                  # Next.js 프론트엔드
 │   ├── public/                # 정적 파일
 │   ├── src/
@@ -56,6 +55,7 @@ MLOA_Raid_Manager/
 │   ├── next.config.js
 │   └── package.json
 ├── backend/                   # Nest.js 백엔드
+│   ├── prisma/                # Prisma 스키마 및 마이그레이션
 │   ├── src/
 │   │   ├── modules/           # 기능별 모듈
 │   │   ├── common/            # 공통 유틸리티
