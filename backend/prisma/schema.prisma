@@ -1,0 +1,117 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int               @id @default(autoincrement())
+  email           String            @unique
+  nickname        String
+  password        String?
+  loginType       String            @default("default") @map("login_type")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  
+  // 관계
+  characters      Character[]
+  schedules       Schedule[]
+  raidMemberships RaidMembership[]
+  leadingGroups   RaidGroup[]       // 리더로 있는 공격대
+  chatLogs        AiChatLog[]
+
+  @@map("users")
+}
+
+model Character {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @map("user_id")
+  name              String
+  job               String?
+  itemLevel         Float?   @map("item_level")
+  isRepresentative  Boolean  @default(false) @map("is_representative")
+  
+  // 관계
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("characters")
+}
+
+model RaidGroup {
+  id              Int               @id @default(autoincrement())
+  name            String
+  description     String?
+  leaderId        Int?              @map("leader_id")
+  isPublic        Boolean           @default(true) @map("is_public")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  
+  // 관계
+  leader          User?             @relation(fields: [leaderId], references: [id], onDelete: SetNull)
+  memberships     RaidMembership[]
+  schedules       RaidSchedule[]
+
+  @@map("raid_groups")
+}
+
+model RaidMembership {
+  id              Int         @id @default(autoincrement())
+  userId          Int         @map("user_id")
+  raidGroupId     Int         @map("raid_group_id")
+  role            String      @default("member")
+  joinedAt        DateTime    @default(now()) @map("joined_at")
+  
+  // 관계
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  raidGroup       RaidGroup   @relation(fields: [raidGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, raidGroupId])
+  @@map("raid_memberships")
+}
+
+model Schedule {
+  id              Int         @id @default(autoincrement())
+  userId          Int         @map("user_id")
+  title           String
+  memo            String?
+  startTime       DateTime    @map("start_time")
+  endTime         DateTime    @map("end_time")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  
+  // 관계
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("schedules")
+}
+
+model RaidSchedule {
+  id              Int         @id @default(autoincrement())
+  raidGroupId     Int         @map("raid_group_id")
+  title           String
+  memo            String?
+  startTime       DateTime    @map("start_time")
+  endTime         DateTime    @map("end_time")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  
+  // 관계
+  raidGroup       RaidGroup   @relation(fields: [raidGroupId], references: [id], onDelete: Cascade)
+
+  @@map("raid_schedules")
+}
+
+model AiChatLog {
+  id              Int         @id @default(autoincrement())
+  userId          Int         @map("user_id")
+  message         String
+  response        String
+  createdAt       DateTime    @default(now()) @map("created_at")
+  
+  // 관계
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_chat_logs")
+}
