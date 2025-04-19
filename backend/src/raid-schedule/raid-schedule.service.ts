@@ -3,15 +3,15 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import {
   CreateRaidScheduleDto,
   UpdateRaidScheduleDto,
 } from './dto/raid-schedule.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class RaidScheduleService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaService) {}
 
   async findAll(raidGroupId?: number) {
     const where = raidGroupId ? { raidGroupId } : {};

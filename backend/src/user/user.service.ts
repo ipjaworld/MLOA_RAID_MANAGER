@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaService) {}
 
   async findAll() {
     return this.prisma.user.findMany();

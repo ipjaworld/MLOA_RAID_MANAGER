@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { CreateCharacterDto, UpdateCharacterDto } from './dto/character.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CharacterService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaService) {}
 
   async findAll(userId?: number) {
     if (userId) {

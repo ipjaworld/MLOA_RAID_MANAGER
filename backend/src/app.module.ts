@@ -6,9 +6,11 @@ import { CharacterModule } from './character/character.module';
 import { RaidGroupModule } from './raid-group/raid-group.module';
 import { RaidScheduleModule } from './raid-schedule/raid-schedule.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
+    PrismaModule,
     UserModule,
     CharacterModule,
     RaidGroupModule,

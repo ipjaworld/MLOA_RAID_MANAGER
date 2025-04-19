@@ -3,12 +3,12 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { CreateScheduleDto, UpdateScheduleDto } from './dto/schedule.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ScheduleService {
-  private prisma = new PrismaClient();
+  constructor(private prisma: PrismaService) {}
 
   async findAll(userId?: number) {
     const where = userId ? { userId } : {};
