@@ -2,19 +2,36 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { CharacterService } from '../character/character.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private characterService: CharacterService,
+  ) {}
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        nickname: true,
+        loginType: true,
+        createdAt: true,
+      },
+    });
   }
 
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        nickname: true,
+        loginType: true,
+        createdAt: true,
         characters: true,
       },
     });
@@ -40,12 +57,16 @@ export class UserService {
       hashedPassword = await bcrypt.hash(password, 10);
     }
 
-    return this.prisma.user.create({
+    const newUser = await this.prisma.user.create({
       data: {
         ...userData,
         password: hashedPassword,
       },
     });
+
+    // 응답에서 비밀번호 제외
+    const { password: _, ...result } = newUser;
+    return result;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -66,13 +87,17 @@ export class UserService {
       hashedPassword = await bcrypt.hash(password, 10);
     }
 
-    return this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
         ...userData,
         ...(hashedPassword && { password: hashedPassword }),
       },
     });
+
+    // 응답에서 비밀번호 제외
+    const { password: _, ...result } = updatedUser;
+    return result;
   }
 
   async remove(id: number) {
@@ -85,9 +110,11 @@ export class UserService {
       throw new NotFoundException(`사용자 ID ${id}를 찾을 수 없습니다`);
     }
 
-    return this.prisma.user.delete({
+    await this.prisma.user.delete({
       where: { id },
     });
+
+    return { success: true };
   }
 
   async getUserRaidGroups(userId: number) {
@@ -109,8 +136,55 @@ export class UserService {
     });
 
     return memberships.map((membership) => ({
-      ...membership.raidGroup,
+      id: membership.raidGroup.id,
+      name: membership.raidGroup.name,
+      description: membership.raidGroup.description,
+      visibility: membership.raidGroup.isPublic ? 'public' : 'private',
+      leader: {
+        id: membership.raidGroup.leaderId,
+      },
       role: membership.role,
+      created_at: membership.raidGroup.createdAt,
     }));
+  }
+
+  // 사용자의 모든 일정 가져오기
+  async getUserSchedules(userId: number, year?: number, month?: number) {
+    // 사용자 존재 여부 확인
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`사용자 ID ${userId}를 찾을 수 없습니다`);
+    }
+
+    let dateFilter = {};
+
+    if (year && month) {
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0);
+
+      // 한 달 기준으로 전후 1주일 추가
+      startDate.setDate(startDate.getDate() - 7);
+      endDate.setDate(endDate.getDate() + 7);
+
+      dateFilter = {
+        startTime: {
+          gte: startDate,
+          lte: endDate,
+        },
+      };
+    }
+
+    return this.prisma.schedule.findMany({
+      where: {
+        userId,
+        ...dateFilter,
+      },
+      orderBy: {
+        startTime: 'asc',
+      },
+    });
   }
 }
