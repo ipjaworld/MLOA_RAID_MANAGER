@@ -35,6 +35,8 @@ model Character {
   job               String?
   itemLevel         Float?   @map("item_level")
   isRepresentative  Boolean  @default(false) @map("is_representative")
+  server            String?  // 추가: 캐릭터 서버
+  level             Int?     // 추가: 캐릭터 레벨
   
   // 관계
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)

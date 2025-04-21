@@ -64,6 +64,8 @@ async function main() {
       job: '블레이드',
       itemLevel: 1730.55,
       isRepresentative: true,
+      server: '루페온',
+      level: 60,
     },
   });
 
