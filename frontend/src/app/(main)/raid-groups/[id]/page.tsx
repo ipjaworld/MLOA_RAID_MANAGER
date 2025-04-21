@@ -1,0 +1,1 @@
+// frontend > src > app > (main) > raid-groups > [id] > page.tsx
