@@ -1,0 +1,1 @@
+// frontend > src > app > (main) > characters > [id] > page.tsx

@@ -1,3 +1,4 @@
+// character.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
@@ -27,6 +28,16 @@ export class CreateCharacterDto {
   @IsBoolean()
   @IsOptional()
   isRepresentative?: boolean;
+
+  @ApiProperty({ description: '서버 이름' })
+  @IsString()
+  @IsOptional()
+  server?: string;
+
+  @ApiProperty({ description: '캐릭터 레벨' })
+  @IsNumber()
+  @IsOptional()
+  level?: number;
 }
 
 export class UpdateCharacterDto {
@@ -49,6 +60,16 @@ export class UpdateCharacterDto {
   @IsBoolean()
   @IsOptional()
   isRepresentative?: boolean;
+
+  @ApiProperty({ description: '서버 이름' })
+  @IsString()
+  @IsOptional()
+  server?: string;
+
+  @ApiProperty({ description: '캐릭터 레벨' })
+  @IsNumber()
+  @IsOptional()
+  level?: number;
 }
 
 export class CharacterResponseDto {
@@ -69,4 +90,10 @@ export class CharacterResponseDto {
 
   @ApiProperty({ description: '대표 캐릭터 여부' })
   isRepresentative: boolean;
+
+  @ApiProperty({ description: '서버 이름' })
+  server?: string;
+
+  @ApiProperty({ description: '캐릭터 레벨' })
+  level?: number;
 }
