@@ -1,195 +1,129 @@
-# MLOA 레이드 매니저 (MLOA Raid Manager)
+# MLOA Raid Manager
 
-> AI 매니저와 함께하는 MMORPG 공격대 일정 관리 서비스
+로스트아크 캐릭터, 공격대 그룹, 개인 일정과 공격대 일정을 한곳에서 관리하기 위한 풀스택 프로토타입입니다. Next.js 프런트엔드와 NestJS·Prisma 백엔드를 분리해 구성했으며, 현재는 핵심 도메인 API와 주요 화면을 구현하고 실제 사용자 흐름을 연결하는 단계입니다.
 
-![MLOA Raid Manager Banner](https://via.placeholder.com/1200x300)
+> **개발 상태**: 작업 중인 저장소입니다. 인증과 AI 매니저는 아직 완성된 기능이 아니며, 일정 화면의 초기 데이터 로딩 등 일부 프런트엔드 연동도 비활성화되어 있습니다.
 
-## 📌 프로젝트 소개
+## 현재 구현된 범위
 
-MLOA 레이드 매니저는 MMORPG 게임(특히 로스트아크) 플레이어들의 레이드 일정을 효율적으로 관리하기 위한 서비스입니다. 게임 내 공격대를 운영하거나 참여하는 유저들이 자신의 일정을 AI 매니저와의 대화를 통해 쉽게 등록하고, 공격대원들의 일정을 취합하여 최적의 레이드 시간을 추천받을 수 있습니다.
+### 프런트엔드
 
-### 🌟 주요 기능
-
-- **AI 매니저와의 대화형 일정 관리**: 자연어로 일정을 말하면 AI가 분석하여 캘린더에 자동 등록
-- **공격대 관리**: 공격대 생성, 멤버 관리, 권한 설정 등
-- **공격대 일정 추천**: 멤버들의 가능한 시간을 분석하여 최적의 레이드 시간대 추천
-- **개인 및 공유 캘린더**: 내 일정 관리 및 공개 설정을 통한 공유
-- **캐릭터 관리**: 게임 내 캐릭터 정보 연동 및 관리 (BETA)
-
-### 💡 개발 배경 및 동기
-
-MMORPG에서 여러 명이 함께하는 레이드의 경우, 공대원들의 일정을 맞추는 과정이 매우 번거롭고 스트레스가 될 수 있습니다. 특히 누군가 한 명이 모든 일정을 취합하고 조율해야 하는 구조는 비효율적입니다. 
-
-이 서비스는 AI를 활용하여 이러한 문제를 해결하고, 모든 공대원이 편리하게 자신의 일정을 공유하고 최적의 레이드 시간을 찾을 수 있도록 도와줍니다.
-
-## 🛠️ 기술 스택
-
-### 프론트엔드
-- **Next.js**: SEO 최적화 및 정적/동적 페이지 생성을 위한 프레임워크
-- **Tailwind CSS**: 반응형 UI 디자인
-- **SWR/React Query**: 데이터 페칭 및 캐싱
+- 로그인·회원가입, 프로필, 캐릭터, 공격대 상세 화면 골격
+- `react-big-calendar` 기반 개인/공격대 일정 UI와 생성·수정·삭제 요청 코드
+- 다크 모드 및 공통 UI 컴포넌트
+- Axios API 클라이언트와 SWR 의존성
 
 ### 백엔드
-- **Nest.js**: 타입스크립트 기반의 백엔드 프레임워크
-- **Prisma**: 데이터베이스 ORM
-- **PostgreSQL**: 관계형 데이터베이스
-- **JWT**: 사용자 인증
 
-### 인프라
-- **AWS 서비스 활용 예정**: EC2, S3, RDS 등
-- **GitHub Actions**: CI/CD 파이프라인 구성 예정
+- 사용자 CRUD 및 사용자별 공격대·일정 조회
+- 캐릭터 CRUD, 대표 캐릭터, 캐릭터 정보 동기화 엔드포인트
+- 공격대 생성·수정·삭제, 가입·탈퇴, 리더 변경
+- 개인 일정 및 공격대 일정 CRUD와 다가오는 일정 조회
+- Lost Ark API 프록시 엔드포인트
+- Prisma/PostgreSQL 데이터 모델과 seed 스크립트
+- Swagger 설정과 단위·E2E 테스트 기반
 
-## 📊 프로젝트 구조
+## 아직 연결되지 않은 부분
 
+- JWT 패키지와 가드는 포함되어 있지만 인증 모듈과 실제 로그인 토큰 흐름은 완성되지 않았습니다.
+- 프런트엔드 API 클라이언트는 임시 토큰을 사용합니다.
+- 일정 화면의 최초 데이터 조회 코드는 주석 처리되어 있으며, 일부 요청 경로는 백엔드 컨트롤러와 추가 정합성 작업이 필요합니다.
+- AI 채팅 로그 모델은 존재하지만 AI 채팅/일정 추천 API와 UI는 구현되어 있지 않습니다.
+- 프로덕션 배포와 CI/CD는 구성되어 있지 않습니다.
+
+## 기술 스택
+
+| 영역 | 기술 |
+| --- | --- |
+| Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS 4, Radix UI, SWR, Axios, React Big Calendar |
+| Backend | NestJS 10, Prisma 6, PostgreSQL, Passport/JWT, Swagger |
+| Test | Jest, Supertest |
+| Local infrastructure | Docker Compose, PostgreSQL 14 |
+
+## 프로젝트 구조
+
+```text
+MLOA_RAID_MANAGER/
+├─ frontend/       # Next.js 애플리케이션
+├─ backend/        # NestJS API와 Prisma 스키마
+├─ prisma/         # 초기 설계 스키마
+├─ docs/           # API 설계 문서
+└─ docker-compose.yml
 ```
-MLOA_Raid_Manager/
-├── docs/                      # 문서 (API 명세서, ERD 등)
-├── frontend/                  # Next.js 프론트엔드
-│   ├── public/                # 정적 파일
-│   ├── src/
-│   │   ├── app/               # 페이지 및 레이아웃
-│   │   ├── components/        # UI 컴포넌트
-│   │   ├── lib/               # 유틸리티 함수
-│   │   ├── hooks/             # React hooks
-│   │   └── services/          # API 서비스
-│   ├── next.config.js
-│   └── package.json
-├── backend/                   # Nest.js 백엔드
-│   ├── prisma/                # Prisma 스키마 및 마이그레이션
-│   ├── src/
-│   │   ├── modules/           # 기능별 모듈
-│   │   ├── common/            # 공통 유틸리티
-│   │   ├── config/            # 환경 설정
-│   │   └── main.ts            # 진입점
-│   ├── nest-cli.json
-│   └── package.json
-├── .github/                   # GitHub 설정
-│   └── workflows/             # CI/CD 워크플로우
-└── README.md                  # 프로젝트 설명
+
+실행 시에는 백엔드가 사용하는 `backend/prisma/schema.prisma`를 기준으로 마이그레이션합니다.
+
+## 로컬 실행
+
+요구 사항: Node.js 20 이상, npm, Docker
+
+```bash
+git clone https://github.com/ipjaworld/MLOA_RAID_MANAGER.git
+cd MLOA_RAID_MANAGER
+docker compose up -d
 ```
 
-## 💻 페이지별 기능
+백엔드 환경 파일을 만듭니다.
 
-### 메인 페이지
-- 로그인/회원가입
-- 서비스 소개 및 주요 기능 안내
+```bash
+cd backend
+npm install
+cp .env.example .env
+```
 
-### 내 일정
-- 개인 일정 관리
-- 월별/일별 캘린더 뷰
-- AI 매니저와의 채팅 인터페이스
+기본 Docker Compose 설정을 사용할 경우 `backend/.env`의 데이터베이스 주소는 다음과 같이 맞춥니다.
 
-### 내 공대
-- 공대 목록 및 생성
-- 공대 정보 관리
-- 공대원 관리 및 권한 설정
-- 가입 신청 관리
+```dotenv
+DATABASE_URL="postgresql://postgres:password@localhost:5432/mloa_raid_manager?schema=public"
+JWT_SECRET="replace-with-a-local-secret"
+```
 
-### 공대 시간표
-- 공대원들의 일정 통합 뷰
-- 시간대별 가능 인원 시각화
-- AI 추천 레이드 시간
+이어서 Prisma와 API 서버를 준비합니다.
 
-### 공대 찾기
-- 공개 공대 목록 브라우징
-- 공대 정보 확인 및 가입 신청
+```bash
+npx prisma generate
+npx prisma migrate dev
+npm run seed
+npm run start:dev
+```
 
-### 캐릭터 관리 (BETA)
-- 캐릭터 정보 연동
-- 캐릭터 아이템 및 스펙 확인
+다른 터미널에서 프런트엔드를 실행합니다.
 
-## 🔄 API 구조
+```bash
+cd frontend
+npm install
+```
 
-API는 RESTful 원칙을 따르며, 주요 엔드포인트는 다음과 같습니다:
+`frontend/.env.local`:
 
-- `/auth`: 인증 관련 (로그인, 회원가입, 로그아웃)
-- `/schedules`: 개인 일정 관리
-- `/characters`: 캐릭터 정보 관리
-- `/raid-groups`: 공격대 그룹 관리
-- `/ai/chat`: AI 매니저와의 채팅
+```dotenv
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
 
-상세 API 문서는 [API 명세서](./docs/api-specification.md)를 참조하세요.
+```bash
+npm run dev
+```
 
-## 📋 데이터 모델
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:4000`
 
-![ERD 다이어그램](./docs/mloa_erd.png)
+Windows PowerShell에서는 `cp` 대신 `Copy-Item`을 사용하세요.
 
-주요 엔티티:
-- `User`: 사용자 정보
-- `Character`: 게임 캐릭터 정보
-- `Schedule`: 개인 일정
-- `RaidGroup`: 공격대 그룹
-- `RaidMember`: 공격대 멤버
-- `RaidSchedule`: 공격대 일정
-- `Chat`: AI 매니저와의 대화 내역
+## 검증
 
-## 🚀 설치 및 실행 방법
+```bash
+cd backend
+npm run build
+npm test
 
-### 로컬 개발 환경 설정
+cd ../frontend
+npm run build
+```
 
-1. 저장소 클론
-   ```bash
-   git clone https://github.com/yourusername/MLOA_Raid_Manager.git
-   cd MLOA_Raid_Manager
-   ```
+## 다음 작업 우선순위
 
-2. 의존성 설치
-   ```bash
-   # 루트 디렉토리에서
-   pnpm install
-
-   # 프론트엔드
-   cd frontend
-   pnpm install
-
-   # 백엔드
-   cd ../backend
-   pnpm install
-   ```
-
-3. 환경 변수 설정
-   ```bash
-   # 프론트엔드 (.env.local)
-   cp frontend/.env.example frontend/.env.local
-
-   # 백엔드 (.env)
-   cp backend/.env.example backend/.env
-   ```
-
-4. 데이터베이스 설정
-   ```bash
-   cd backend
-   pnpm exec prisma migrate dev
-   ```
-
-5. 개발 서버 실행
-   ```bash
-   # 프론트엔드 (http://localhost:3000)
-   cd frontend
-   pnpm dev
-
-   # 백엔드 (http://localhost:4000)
-   cd ../backend
-   pnpm start:dev
-   ```
-
-## 👥 기여 방법
-
-1. 이 저장소를 포크합니다.
-2. 새로운 기능 브랜치를 생성합니다 (`git checkout -b feature/amazing-feature`).
-3. 변경사항을 커밋합니다 (`git commit -m 'Add some amazing feature'`).
-4. 브랜치에 푸시합니다 (`git push origin feature/amazing-feature`).
-5. Pull Request를 생성합니다.
-
-## 📜 라이센스
-
-이 프로젝트는 MIT 라이센스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
-
-## 📬 연락처 및 문의사항
-
-- GitHub Issues: [이슈 생성하기](https://github.com/yourusername/MLOA_Raid_Manager/issues)
-- Email: this_is_laugh@naver.com
-
----
-
-© 2025 MLOA Raid Manager. All Rights Reserved.
+1. 인증 모듈과 실제 JWT 로그인 흐름 완성
+2. 프런트엔드 요청 URL·DTO와 백엔드 컨트롤러 정합화
+3. 일정 초기 조회 및 공격대 목록 연동 복구
+4. 환경 변수 정리와 통합 테스트 추가
+5. AI 기능은 핵심 일정 관리 흐름이 안정화된 뒤 별도 설계
